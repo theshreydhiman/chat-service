@@ -1,0 +1,27 @@
+services:
+  redis:
+    image: redis:7.4-alpine
+    ports: ["6379:6379"]
+
+  dynamodb:
+    image: amazon/dynamodb-local:2.5.2
+    command: ["-jar", "DynamoDBLocal.jar", "-inMemory", "-sharedDb"]
+    ports: ["8000:8000"]
+
+  kafka:
+    image: redpandadata/redpanda:v24.2.7
+    command:
+      - redpanda start
+      - --mode dev-container
+      - --smp 1
+      - --kafka-addr PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://localhost:9092
+    ports: ["9092:9092"]
+
+  minio:
+    image: minio/minio:RELEASE.2024-10-13T13-34-11Z
+    command: server /data
+    environment:
+      MINIO_ROOT_USER: local
+      MINIO_ROOT_PASSWORD: localpassword
+    ports: ["9000:9000"]
